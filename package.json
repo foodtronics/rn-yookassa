@@ -1,7 +1,6 @@
 {
   "name": "rn-yookassa",
-  "version": "1.0.7",
-  "description": "React Native YooKassa Module SDK Integration.",
+  "version": "0.0.1",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
   "types": "lib/typescript/index.d.ts",
@@ -42,13 +41,6 @@
     "ios",
     "android"
   ],
-  "repository": "https://github.com/kurovskyi/rn-yookassa",
-  "author": "Dmytro Kurovskyi <dmytro.kurovskyi@gmail.com> (https://github.com/kurovskyi)",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/kurovskyi/rn-yookassa/issues"
-  },
-  "homepage": "https://github.com/kurovskyi/rn-yookassa#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
@@ -88,23 +80,6 @@
     "extends": [
       "@commitlint/config-conventional"
     ]
-  },
-  "release-it": {
-    "git": {
-      "commitMessage": "chore: release ${version}",
-      "tagName": "v${version}"
-    },
-    "npm": {
-      "publish": true
-    },
-    "github": {
-      "release": true
-    },
-    "plugins": {
-      "@release-it/conventional-changelog": {
-        "preset": "angular"
-      }
-    }
   },
   "eslintConfig": {
     "root": true,

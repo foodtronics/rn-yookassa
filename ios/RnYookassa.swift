@@ -3,10 +3,13 @@ import YooKassaPayments
 
 @objc(RnYookassa)
 class RnYookassa: RCTViewManager, TokenizationModuleOutput {
-
     var callback: RCTResponseSenderBlock?
     var confirmCallback: RCTResponseSenderBlock?
     var viewController: UIViewController?
+
+    func didFinishConfirmation(paymentMethodType: YooKassaPayments.PaymentMethodType) {
+
+    }
 
     @objc
     func tokenize(_ params: NSDictionary, callbacker callback: @escaping RCTResponseSenderBlock) -> Void {
@@ -15,19 +18,20 @@ class RnYookassa: RCTViewManager, TokenizationModuleOutput {
             let _shopId = params["shopId"] as? String,
             let title = params["title"] as? String,
             let subtitle = params["subtitle"] as? String,
-            let amountValue = params["price"] as? NSNumber
+            let amountValue = params["price"] as? NSNumber,
+            let savePaymentMethod = params["savePaymentMethod"] as? Bool
         else {
             return
         }
 
-            // Optional:
-            let paymentTypes = params["paymentMethodTypes"] as? [String]
-            let authCenterClientId = params["authCenterClientId"] as? String
-            let userPhoneNumber = params["userPhoneNumber"] as? String
-            let gatewayId = params["gatewayId"] as? String
-            let applePayMerchantId = params["applePayMerchantId"] as? String
-            let returnUrl = params["returnUrl"] as? String
-            let isDebug = params["isDebug"] as? Bool
+        // Optional:
+        let paymentTypes = params["paymentMethodTypes"] as? [String]
+        let authCenterClientId = params["authCenterClientId"] as? String
+        let userPhoneNumber = params["userPhoneNumber"] as? String
+        let gatewayId = params["gatewayId"] as? String
+        let applePayMerchantId = params["applePayMerchantId"] as? String
+        let returnUrl = params["returnUrl"] as? String
+        let isDebug = params["isDebug"] as? Bool
 
         var paymentMethodTypes: PaymentMethodTypes = []
 
@@ -65,7 +69,7 @@ class RnYookassa: RCTViewManager, TokenizationModuleOutput {
 
         let tokenizationSettings = TokenizationSettings(paymentMethodTypes: paymentMethodTypes)
 
-        let amount = Amount(value: amountValue.decimalValue, currency: .rub) // rub
+        let amount = Amount(value: amountValue.decimalValue, currency: .rub)
         let tokenizationModuleInputData =
             TokenizationModuleInputData(clientApplicationKey: clientApplicationKey,
             shopName: title,
@@ -73,13 +77,15 @@ class RnYookassa: RCTViewManager, TokenizationModuleOutput {
             amount: amount,
             gatewayId: gatewayId,
             tokenizationSettings: tokenizationSettings,
-            testModeSettings: (isDebug != nil) ? testModeSettings : nil,
+            // testModeSettings: (isDebug != nil) ? testModeSettings : nil,
+            testModeSettings: (isDebug ?? false) ? testModeSettings : nil,
             cardScanning: CardScannerProvider(),
             applePayMerchantIdentifier: applePayMerchantId,
             returnUrl: returnUrl,
             isLoggingEnabled: (isDebug != nil) ? true : false,
             userPhoneNumber: userPhoneNumber,
-            savePaymentMethod: .userSelects,
+            customizationSettings: CustomizationSettings(mainScheme: UIColor(red: 244 / 255, green: 71 / 255, blue: 0 / 255, alpha: 1)),
+            savePaymentMethod: savePaymentMethod ? .on : .off,
             moneyAuthClientId: authCenterClientId
             // customerId: userPhoneNumber
         )
@@ -100,7 +106,7 @@ class RnYookassa: RCTViewManager, TokenizationModuleOutput {
             return
         }
 
-        guard let paymentMethodType = PaymentMethodType(rawValue: _paymentMethodType.lowercased()) else {return}
+        guard let paymentMethodType = PaymentMethodType(rawValue: _paymentMethodType.lowercased()) else { return }
 
         guard let viewController = viewController as? TokenizationModuleInput else { return }
         confirmCallback = callback

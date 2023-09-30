@@ -20,8 +20,8 @@ Pod::Spec.new do |s|
   s.authors      = package["author"]
 
   s.platforms    = { :ios => "10.0" }
-  s.source       = { :git => "https://github.com/kurovskyi/rn-yookassa.git", :tag => "#{s.version}" }
-
+  s.ios.deployment_target = '13.0'
+  
   s.source_files = "ios/**/*.{h,m,mm,swift}"
   s.requires_arc = true
   s.static_framework = true

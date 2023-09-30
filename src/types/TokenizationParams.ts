@@ -15,4 +15,5 @@ export interface TokenizationParams {
   googlePaymentMethodTypes?: GooglePaymentMethodTypesEnum[];
   applePayMerchantId?: string;
   isDebug?: boolean;
+  savePaymentMethod: boolean;
 }

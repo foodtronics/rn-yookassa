@@ -1,6 +1,10 @@
 {
   "name": "rn-yookassa",
-  "version": "0.0.2",
+  "description": "Yookassa integration for React Native",
+  "version": "0.0.3",
+  "author": "Fibbee",
+  "license": "MIT",
+  "homepage": "https://fibbee.store",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
   "types": "lib/typescript/index.d.ts",

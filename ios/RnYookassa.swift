@@ -68,8 +68,8 @@ class RnYookassa: RCTViewManager, TokenizationModuleOutput {
         let amount = Amount(value: amountValue.decimalValue, currency: .rub)
         let tokenizationModuleInputData =
             TokenizationModuleInputData(clientApplicationKey: clientApplicationKey,
-            shopId: _shopId,
             shopName: title,
+            shopId: _shopId,
             purchaseDescription: subtitle,
             amount: amount,
             gatewayId: gatewayId,

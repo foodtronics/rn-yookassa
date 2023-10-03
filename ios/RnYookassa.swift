@@ -7,10 +7,6 @@ class RnYookassa: RCTViewManager, TokenizationModuleOutput {
     var confirmCallback: RCTResponseSenderBlock?
     var viewController: UIViewController?
 
-    func didFinishConfirmation(paymentMethodType: YooKassaPayments.PaymentMethodType) {
-
-    }
-
     @objc
     func tokenize(_ params: NSDictionary, callbacker callback: @escaping RCTResponseSenderBlock) -> Void {
         self.callback = callback
@@ -72,29 +68,29 @@ class RnYookassa: RCTViewManager, TokenizationModuleOutput {
         let amount = Amount(value: amountValue.decimalValue, currency: .rub)
         let tokenizationModuleInputData =
             TokenizationModuleInputData(clientApplicationKey: clientApplicationKey,
+            shopId: _shopId,
             shopName: title,
             purchaseDescription: subtitle,
             amount: amount,
             gatewayId: gatewayId,
             tokenizationSettings: tokenizationSettings,
-            // testModeSettings: (isDebug != nil) ? testModeSettings : nil,
             testModeSettings: (isDebug ?? false) ? testModeSettings : nil,
-            cardScanning: CardScannerProvider(),
+            // cardScanning: CardScannerProvider(),
             applePayMerchantIdentifier: applePayMerchantId,
             returnUrl: returnUrl,
             isLoggingEnabled: (isDebug != nil) ? true : false,
             userPhoneNumber: userPhoneNumber,
             customizationSettings: CustomizationSettings(mainScheme: UIColor(red: 244 / 255, green: 71 / 255, blue: 0 / 255, alpha: 1)),
             savePaymentMethod: savePaymentMethod ? .on : .off,
-            moneyAuthClientId: authCenterClientId
-            // customerId: userPhoneNumber
+            moneyAuthClientId: authCenterClientId,
+            applicationScheme: "fibbee://"
         )
 
         DispatchQueue.main.async {
             let inputData: TokenizationFlow = .tokenization(tokenizationModuleInputData)
             self.viewController = TokenizationAssembly.makeModule(inputData: inputData, moduleOutput: self)
-            let rootViewController = UIApplication.shared.keyWindow!.rootViewController!
-            rootViewController.present(self.viewController!, animated: true, completion: nil)
+            let rootViewController = UIApplication.shared.windows.last { $0.isKeyWindow }?.rootViewController!
+            rootViewController?.present(self.viewController!, animated: true, completion: nil)
         }
     }
 
@@ -121,9 +117,8 @@ class RnYookassa: RCTViewManager, TokenizationModuleOutput {
         }
     }
 
-    func tokenizationModule(_ module: TokenizationModuleInput,
-                            didTokenize token: Tokens,
-                            paymentMethodType: PaymentMethodType) {
+    func tokenizationModule(_ module: TokenizationModuleInput, didTokenize token: Tokens, paymentMethodType: PaymentMethodType)
+    {
         let result: NSDictionary = [
             "paymentToken" : token.paymentToken,
             "paymentMethodType" : paymentMethodType.rawValue.uppercased()
@@ -142,9 +137,7 @@ class RnYookassa: RCTViewManager, TokenizationModuleOutput {
             "message" : "Payment cancelled."
         ]
 
-        DispatchQueue.main.async {
-            self.viewController?.dismiss(animated: true)
-        }
+        DispatchQueue.main.async { self.dismiss() }
 
         if let callback = callback {
             callback([NSNull(), error])
@@ -152,23 +145,17 @@ class RnYookassa: RCTViewManager, TokenizationModuleOutput {
         }
     }
 
-    func didSuccessfullyConfirmation(paymentMethodType: PaymentMethodType) {
+    func didFinishConfirmation(paymentMethodType: PaymentMethodType) {
         let result: NSDictionary = [
             "paymentMethodType" : paymentMethodType.rawValue.uppercased()
         ]
 
-        DispatchQueue.main.async {
-            self.viewController?.dismiss(animated: true)
-        }
+        DispatchQueue.main.async { self.dismiss() }
 
         if let callback = self.confirmCallback {
             callback([result])
             confirmCallback = nil
         }
-
-// OLD VERSION
-//        viewController?.dismiss(animated: true)
-//        self.dismiss()
     }
 
     override class func requiresMainQueueSetup() -> Bool {
@@ -176,5 +163,4 @@ class RnYookassa: RCTViewManager, TokenizationModuleOutput {
     }
 
     func didSuccessfullyPassedCardSec(on module: TokenizationModuleInput) {}
-
 }

@@ -21,7 +21,7 @@ Pod::Spec.new do |s|
     :file => "LICENSE"
   }
   s.authors      = package["author"]
-
+  s.source       = { :git => "https://github.com/foodtronics/rn-yookassa.git", :tag => "#{s.version}" }
   s.platforms    = { :ios => "10.0" }
   s.ios.deployment_target = '13.0'
   

@@ -89,8 +89,10 @@ class RnYookassa: RCTViewManager, TokenizationModuleOutput {
         DispatchQueue.main.async {
             let inputData: TokenizationFlow = .tokenization(tokenizationModuleInputData)
             self.viewController = TokenizationAssembly.makeModule(inputData: inputData, moduleOutput: self)
-            let rootViewController = UIApplication.shared.windows.last { $0.isKeyWindow }?.rootViewController!
-            rootViewController?.present(self.viewController!, animated: true, completion: nil)
+            // let rootViewController = UIApplication.shared.windows.last { $0.isKeyWindow }?.rootViewController!
+            // rootViewController?.present(self.viewController!, animated: true, completion: nil)
+            let rootViewController = UIApplication.shared.keyWindow!.rootViewController!
+                        rootViewController.present(self.viewController!, animated: true, completion: nil)
         }
     }
 

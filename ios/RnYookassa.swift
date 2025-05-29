@@ -38,10 +38,6 @@ class RnYookassa: RCTViewManager, TokenizationModuleOutput {
                         return
                     }
 
-                    if (payType == .applePay && applePayMerchantId == nil) {
-                        return
-                    }
-
                     paymentMethodTypes.insert(PaymentMethodTypes(rawValue: [payType]))
                 }
             }
@@ -51,10 +47,6 @@ class RnYookassa: RCTViewManager, TokenizationModuleOutput {
 
             if (authCenterClientId != nil) {
                 paymentMethodTypes.insert(.yooMoney)
-            }
-
-            if (applePayMerchantId != nil) {
-                paymentMethodTypes.insert(.applePay)
             }
         }
 
@@ -76,7 +68,6 @@ class RnYookassa: RCTViewManager, TokenizationModuleOutput {
             tokenizationSettings: tokenizationSettings,
             testModeSettings: (isDebug ?? false) ? testModeSettings : nil,
             // cardScanning: CardScannerProvider(),
-            applePayMerchantIdentifier: applePayMerchantId,
             returnUrl: returnUrl,
             isLoggingEnabled: (isDebug != nil) ? true : false,
             userPhoneNumber: userPhoneNumber,
@@ -165,4 +156,16 @@ class RnYookassa: RCTViewManager, TokenizationModuleOutput {
     }
 
     func didSuccessfullyPassedCardSec(on module: TokenizationModuleInput) {}
+
+    func didFailConfirmation(error: YooKassaPaymentsError?) {
+        let err: NSDictionary = [
+            "code": "E_CONFIRMATION_FAILED",
+            "message": error?.localizedDescription ?? "Confirmation failed."
+        ]
+
+        DispatchQueue.main.async { self.dismiss() }
+
+        confirmCallback?([NSNull(), err])
+        confirmCallback = nil
+    }
 }
